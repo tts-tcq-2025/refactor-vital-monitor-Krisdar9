@@ -3,35 +3,40 @@
 #include <thread>
 #include <chrono>
 #include <iostream>
+#include <unordered_map>
 using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
 
-VitalStatus evaluateVitals(const VitalSigns& vitals) {
-    if (vitals.temperature > 102 || vitals.temperature < 95) {
+VitalStatus checkTemperature(float temp) {
+    if (temp > 102 || temp < 95) {
         return VitalStatus::TemperatureOutOfRange;
     }
-    if (vitals.pulseRate < 60 || vitals.pulseRate > 100) {
+    return VitalStatus::OK;
+}
+
+VitalStatus checkPulse(float pulse) {
+    if (pulse < 60 || pulse > 100) {
         return VitalStatus::PulseOutOfRange;
     }
-    if (vitals.spo2 < 90) {
+    return VitalStatus::OK;
+}
+
+VitalStatus checkSpo2(float spo2) {
+    if (spo2 < 90) {
         return VitalStatus::Spo2OutOfRange;
     }
     return VitalStatus::OK;
 }
 
-void printAlert(VitalStatus status) {
-    switch (status) {
-        case VitalStatus::TemperatureOutOfRange:
-            cout << "Temperature is critical!\n";
-            break;
-        case VitalStatus::PulseOutOfRange:
-            cout << "Pulse Rate is out of range!\n";
-            break;
-        case VitalStatus::Spo2OutOfRange:
-            cout << "Oxygen Saturation out of range!\n";
-            break;
-        default:
-            break;
-    }
+VitalStatus evaluateVitals(const VitalSigns& vitals) {
+    VitalStatus status;
+
+    status = checkTemperature(vitals.temperature);
+    if (status != VitalStatus::OK) return status;
+
+    status = checkPulse(vitals.pulseRate);
+    if (status != VitalStatus::OK) return status;
+
+    return checkSpo2(vitals.spo2); // final check
 }
 
 void blinkIndicator() {
@@ -40,6 +45,19 @@ void blinkIndicator() {
         sleep_for(seconds(1));
         cout << "\r *" << flush;
         sleep_for(seconds(1));
+    }
+}
+
+void printAlert(VitalStatus status) {
+    static const std::unordered_map<VitalStatus, const char*> alertMessages = {
+        {VitalStatus::TemperatureOutOfRange, "Temperature is critical!\n"},
+        {VitalStatus::PulseOutOfRange, "Pulse Rate is out of range!\n"},
+        {VitalStatus::Spo2OutOfRange, "Oxygen Saturation out of range!\n"}
+    };
+
+    auto it = alertMessages.find(status);
+    if (it != alertMessages.end()) {
+        cout << it->second;
     }
 }
 
