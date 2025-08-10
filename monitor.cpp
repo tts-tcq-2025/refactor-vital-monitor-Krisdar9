@@ -36,7 +36,7 @@ VitalStatus evaluateVitals(const VitalSigns& vitals) {
     status = checkPulse(vitals.pulseRate);
     if (status != VitalStatus::OK) return status;
 
-    return checkSpo2(vitals.spo2); // final check
+    return checkSpo2(vitals.spo2);
 }
 
 void blinkIndicator() {
