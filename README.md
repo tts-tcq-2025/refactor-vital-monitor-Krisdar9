@@ -60,6 +60,7 @@ Warnings need to be displayed in these ranges:
 - 102-1.53 to 102 Warning: Approaching hyperthermia 
 - Same for pulse-rate and SPO2.
 
+Code in detail description
 - vitals.h - Pure functions and data structures for vital sign logic
 - vitals.cpp - pure functions 
 - monitor.h - Data for boundaries/messages
