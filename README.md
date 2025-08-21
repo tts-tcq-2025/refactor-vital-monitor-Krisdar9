@@ -49,18 +49,20 @@ Shorten the Semantic distance
 
 ## TDD
 
-Extension 1: Early Warning Care-givers need early warnings to take action, in addition to the alarm that you print after the limit is breached. Introduce a 'warning' level with a tolerance of 1.5% of the upper-limit.
+Extension 1:
+
+Early Warning Care-givers need early warnings to take action, in addition to the alarm that you print after the limit is breached. Introduce a 'warning' level with a tolerance of 1.5% of the upper-limit.
 
 Example: 
 If the body-temperature extremeties are 95 and 102, the warning-tolerance is 1.5% of 102 = 1.53. 
 Warnings need to be displayed in these ranges:
-95 to 95+1.53 Warning: Approaching hypothermia 
-102-1.53 to 102 Warning: Approaching hyperthermia 
-Same for pulse-rate and SPO2.
+- 95 to 95+1.53 Warning: Approaching hypothermia 
+- 102-1.53 to 102 Warning: Approaching hyperthermia 
+- Same for pulse-rate and SPO2.
 
-vitals.h - Pure functions and data structures for vital sign logic
-vitals.cpp - pure functions 
-monitor.h - Data for boundaries/messages
-monitor.cpp - Implementation of composition functions 
-main.cpp - I/O code: reading values, printing results
-test-monitor.cpp - Unit tests covering all conditions
+- vitals.h - Pure functions and data structures for vital sign logic
+- vitals.cpp - pure functions 
+- monitor.h - Data for boundaries/messages
+- monitor.cpp - Implementation of composition functions 
+- main.cpp - I/O code: reading values, printing results
+- test-monitor.cpp - Unit tests covering all conditions
