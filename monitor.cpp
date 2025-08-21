@@ -7,22 +7,57 @@
 using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
 
 VitalStatus checkTemperature(float temp) {
-    if (temp > 102 || temp < 95) {
+    const float lower = 95.0;
+    const float upper = 102.0;
+    const float tolerance = upper * 0.015; // 1.53
+
+    if (temp < lower) {
         return VitalStatus::TemperatureOutOfRange;
+    }
+    if (temp > upper) {
+        return VitalStatus::TemperatureOutOfRange;
+    }
+
+    if (temp >= lower && temp <= lower + tolerance) {
+        cout << "Warning: Approaching hypothermia\n";
+    }
+    if (temp >= upper - tolerance && temp <= upper) {
+        cout << "Warning: Approaching hyperthermia\n";
     }
     return VitalStatus::OK;
 }
 
 VitalStatus checkPulse(float pulse) {
-    if (pulse < 60 || pulse > 100) {
+    const float lower = 60.0;
+    const float upper = 100.0;
+    const float tolerance = upper * 0.015; // 1.5
+
+    if (pulse < lower) {
         return VitalStatus::PulseOutOfRange;
+    }
+    if (pulse > upper) {
+        return VitalStatus::PulseOutOfRange;
+    }
+
+    if (pulse >= lower && pulse <= lower + tolerance) {
+        cout << "Warning: Approaching bradycardia\n";
+    }
+    if (pulse >= upper - tolerance && pulse <= upper) {
+        cout << "Warning: Approaching tachycardia\n";
     }
     return VitalStatus::OK;
 }
 
 VitalStatus checkSpo2(float spo2) {
-    if (spo2 < 90) {
+    const float lower = 90.0;
+    const float tolerance = 100.0 * 0.015; // 1.5
+
+    if (spo2 < lower) {
         return VitalStatus::Spo2OutOfRange;
+    }
+
+    if (spo2 >= lower && spo2 <= lower + tolerance) {
+        cout << "Warning: Approaching hypoxia\n";
     }
     return VitalStatus::OK;
 }
