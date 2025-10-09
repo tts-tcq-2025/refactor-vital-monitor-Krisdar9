@@ -6,40 +6,41 @@
 #include <unordered_map>
 using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
 
-VitalStatus checkTemperature(float temp) {
-    const float lower = 95.0f;
-    const float upper = 102.0f;
-    const float tolerance = upper * 0.015f;  // 1.53
-
-    if (temp < lower || temp > upper) {
-        return VitalStatus::TemperatureOutOfRange;
-    }
-
+void printTemperatureWarning(float temp, float lower, float upper, float tolerance) {
     if (temp <= lower + tolerance) {
         cout << "Warning: Approaching hypothermia\n";
     } else if (temp >= upper - tolerance) {
         cout << "Warning: Approaching hyperthermia\n";
     }
+}
+VitalStatus checkTemperature(float temp) {
+    const float lower = 95.0f;
+    const float upper = 102.0f;
+    const float tolerance = upper * 0.015f;
 
+    if (temp < lower || temp > upper) {
+        return VitalStatus::TemperatureOutOfRange;
+    }
+    printTemperatureWarning(temp, lower, upper, tolerance);
     return VitalStatus::OK;
 }
 
-
+void printPulseWarning(float pulse, float lower, float upper, float tolerance) {
+    if (pulse <= lower + tolerance) {
+        cout << "Warning: Approaching bradycardia\n";
+    } else if (pulse >= upper - tolerance) {
+        cout << "Warning: Approaching tachycardia\n";
+    }
+}
 VitalStatus checkPulse(float pulse) {
-    const float lower = 60.0;
-    const float upper = 100.0;
-    const float tolerance = upper * 0.015;   // 1.5
+    const float lower = 60.0f;
+    const float upper = 100.0f;
+    const float tolerance = upper * 0.015f;   // 1.5
 
     if (pulse < lower || pulse > upper) {
         return VitalStatus::PulseOutOfRange;
     }
-
-    if (pulse >= lower && pulse <= lower + tolerance) {
-        cout << "Warning: Approaching bradycardia\n";
-    } else if (pulse >= upper - tolerance && pulse <= upper) {
-        cout << "Warning: Approaching tachycardia\n";
-    }
-
+    printPulseWarning(pulse, lower, upper, tolerance);
     return VitalStatus::OK;
 }
 
