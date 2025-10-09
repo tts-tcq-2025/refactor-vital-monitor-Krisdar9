@@ -7,19 +7,20 @@
 using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
 
 VitalStatus checkTemperature(float temp) {
-    const float lower = 95.0;
-    const float upper = 102.0;
-    const float tolerance = upper * 0.015;   // 1.53
+    const float lower = 95.0f;
+    const float upper = 102.0f;
+    const float tolerance = upper * 0.015f;  // 1.53
 
-    if ((temp < lower) || (temp > upper)) {
+    if (temp < lower || temp > upper){
         return VitalStatus::TemperatureOutOfRange;
     }
-    if (temp <= (lower + tolerance)) {
+
+    if (temp <= lower + tolerance) {
         cout << "Warning: Approaching hypothermia\n";
-    }    
-    if (temp >= (upper - tolerance)) {
+    } else if (temp >= upper - tolerance) {
         cout << "Warning: Approaching hyperthermia\n";
     }
+
     return VitalStatus::OK;
 }
 
