@@ -14,13 +14,12 @@ VitalStatus checkTemperature(float temp) {
     if (temp < lower || temp > upper) {
         return VitalStatus::TemperatureOutOfRange;
     }
-
-    if (temp >= lower && temp <= lower + tolerance) {
+    if (temp <= lower + tolerance) {
         cout << "Warning: Approaching hypothermia\n";
-    } else if (temp >= upper - tolerance && temp <= upper) {
+    }    
+    if (temp >= upper - tolerance) {
         cout << "Warning: Approaching hyperthermia\n";
     }
-
     return VitalStatus::OK;
 }
 
