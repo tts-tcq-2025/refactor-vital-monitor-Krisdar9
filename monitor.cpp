@@ -11,19 +11,19 @@ VitalStatus checkTemperature(float temp) {
     const float upper = 102.0;
     const float tolerance = upper * 0.015;   // 1.53
 
-    if (temp < lower) {
-        return VitalStatus::TemperatureOutOfRange;
-    }
-    if (temp > upper) {
+    if (temp < lower || temp > upper) {
         return VitalStatus::TemperatureOutOfRange;
     }
 
-    if (temp >= lower && temp <= lower + tolerance) {
-        cout << "Warning: Approaching hypothermia\n";
+    if ((temp >= lower && temp <= lower + tolerance) ||
+        (temp >= upper - tolerance && temp <= upper)) {
+        if (temp <= lower + tolerance) {
+            cout << "Warning: Approaching hypothermia\n";
+        } else {
+            cout << "Warning: Approaching hyperthermia\n";
+        }
     }
-    if (temp >= upper - tolerance && temp <= upper) {
-        cout << "Warning: Approaching hyperthermia\n";
-    }
+
     return VitalStatus::OK;
 }
 
@@ -32,19 +32,19 @@ VitalStatus checkPulse(float pulse) {
     const float upper = 100.0;
     const float tolerance = upper * 0.015;   // 1.5
 
-    if (pulse < lower) {
-        return VitalStatus::PulseOutOfRange;
-    }
-    if (pulse > upper) {
+    if (pulse < lower || pulse > upper) {
         return VitalStatus::PulseOutOfRange;
     }
 
-    if (pulse >= lower && pulse <= lower + tolerance) {
-        cout << "Warning: Approaching bradycardia\n";
+    if ((pulse >= lower && pulse <= lower + tolerance) ||
+        (pulse >= upper - tolerance && pulse <= upper)) {
+        if (pulse <= lower + tolerance) {
+            cout << "Warning: Approaching bradycardia\n";
+        } else {
+            cout << "Warning: Approaching tachycardia\n";
+        }
     }
-    if (pulse >= upper - tolerance && pulse <= upper) {
-        cout << "Warning: Approaching tachycardia\n";
-    }
+
     return VitalStatus::OK;
 }
 
@@ -55,8 +55,7 @@ VitalStatus checkSpo2(float spo2) {
     if (spo2 < lower) {
         return VitalStatus::Spo2OutOfRange;
     }
-
-    if (spo2 >= lower && spo2 <= lower + tolerance) {
+    if (spo2 <= lower + tolerance) {
         cout << "Warning: Approaching hypoxia\n";
     }
     return VitalStatus::OK;
