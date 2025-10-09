@@ -11,7 +11,7 @@ VitalStatus checkTemperature(float temp) {
     const float upper = 102.0f;
     const float tolerance = upper * 0.015f;  // 1.53
 
-    if (temp < lower || temp > upper){
+    if (temp < lower || temp > upper) {
         return VitalStatus::TemperatureOutOfRange;
     }
 
