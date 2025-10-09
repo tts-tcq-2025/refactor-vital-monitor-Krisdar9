@@ -9,7 +9,7 @@ using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
 VitalStatus checkTemperature(float temp) {
     const float lower = 95.0;
     const float upper = 102.0;
-    const float tolerance = upper * 0.015; // 1.53
+    const float tolerance = upper * 0.015;   // 1.53
 
     if (temp < lower) {
         return VitalStatus::TemperatureOutOfRange;
@@ -30,7 +30,7 @@ VitalStatus checkTemperature(float temp) {
 VitalStatus checkPulse(float pulse) {
     const float lower = 60.0;
     const float upper = 100.0;
-    const float tolerance = upper * 0.015; // 1.5
+    const float tolerance = upper * 0.015;   // 1.5
 
     if (pulse < lower) {
         return VitalStatus::PulseOutOfRange;
@@ -50,7 +50,7 @@ VitalStatus checkPulse(float pulse) {
 
 VitalStatus checkSpo2(float spo2) {
     const float lower = 90.0;
-    const float tolerance = 100.0 * 0.015; // 1.5
+    const float tolerance = 100.0 * 0.015;   // 1.5
 
     if (spo2 < lower) {
         return VitalStatus::Spo2OutOfRange;
