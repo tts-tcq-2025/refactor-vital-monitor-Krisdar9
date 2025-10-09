@@ -63,15 +63,10 @@ VitalStatus checkSpo2(float spo2) {
 }
 
 VitalStatus evaluateVitals(const VitalSigns& vitals) {
-    VitalStatus status;
-
-    status = checkTemperature(vitals.temperature);
-    if (status != VitalStatus::OK) return status;
-
-    status = checkPulse(vitals.pulseRate);
-    if (status != VitalStatus::OK) return status;
-
-    return checkSpo2(vitals.spo2);
+    VitalStatus status = checkTemperature(vitals.temperature);
+    status = (status == VitalStatus::OK) ? checkPulse(vitals.pulseRate) : status;
+    status = (status == VitalStatus::OK) ? checkSpo2(vitals.spo2) : status;
+    return status;
 }
 
 void blinkIndicator() {
