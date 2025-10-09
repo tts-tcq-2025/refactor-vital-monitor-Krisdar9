@@ -11,13 +11,13 @@ VitalStatus checkTemperature(float temp) {
     const float upper = 102.0;
     const float tolerance = upper * 0.015;   // 1.53
 
-    if (temp < lower || temp > upper) {
+    if ((temp < lower) || (temp > upper)) {
         return VitalStatus::TemperatureOutOfRange;
     }
-    if (temp <= lower + tolerance) {
+    if (temp <= (lower + tolerance)) {
         cout << "Warning: Approaching hypothermia\n";
     }    
-    if (temp >= upper - tolerance) {
+    if (temp >= (upper - tolerance)) {
         cout << "Warning: Approaching hyperthermia\n";
     }
     return VitalStatus::OK;
