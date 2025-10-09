@@ -15,17 +15,15 @@ VitalStatus checkTemperature(float temp) {
         return VitalStatus::TemperatureOutOfRange;
     }
 
-    if ((temp >= lower && temp <= lower + tolerance) ||
-        (temp >= upper - tolerance && temp <= upper)) {
-        if (temp <= lower + tolerance) {
-            cout << "Warning: Approaching hypothermia\n";
-        } else {
-            cout << "Warning: Approaching hyperthermia\n";
-        }
+    if (temp >= lower && temp <= lower + tolerance) {
+        cout << "Warning: Approaching hypothermia\n";
+    } else if (temp >= upper - tolerance && temp <= upper) {
+        cout << "Warning: Approaching hyperthermia\n";
     }
 
     return VitalStatus::OK;
 }
+
 
 VitalStatus checkPulse(float pulse) {
     const float lower = 60.0;
@@ -36,13 +34,10 @@ VitalStatus checkPulse(float pulse) {
         return VitalStatus::PulseOutOfRange;
     }
 
-    if ((pulse >= lower && pulse <= lower + tolerance) ||
-        (pulse >= upper - tolerance && pulse <= upper)) {
-        if (pulse <= lower + tolerance) {
-            cout << "Warning: Approaching bradycardia\n";
-        } else {
-            cout << "Warning: Approaching tachycardia\n";
-        }
+    if (pulse >= lower && pulse <= lower + tolerance) {
+        cout << "Warning: Approaching bradycardia\n";
+    } else if (pulse >= upper - tolerance && pulse <= upper) {
+        cout << "Warning: Approaching tachycardia\n";
     }
 
     return VitalStatus::OK;
