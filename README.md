@@ -56,11 +56,11 @@ Early Warning Care-givers need early warnings to take action, in addition to the
 Example: 
 If the body-temperature extremeties are 95 and 102, the warning-tolerance is 1.5% of 102 = 1.53. 
 Warnings need to be displayed in these ranges:
-- 95 to 95+1.53 Warning: Approaching hypothermia 
-- 102-1.53 to 102 Warning: Approaching hyperthermia 
+- 95  to  95+1.53  Warning: Approaching hypothermia 
+- 102-1.53  to  102  Warning: Approaching hyperthermia 
 - Same for pulse-rate and SPO2.
 
 Code in detail description
-- monitor.h - Data for boundaries/messages
+- monitor.h - Structures and Function definitions
 - monitor.cpp - Implementation of composition functions 
 - test-monitor.cpp - Unit tests covering all conditions
