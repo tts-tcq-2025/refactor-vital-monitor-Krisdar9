@@ -61,9 +61,6 @@ Warnings need to be displayed in these ranges:
 - Same for pulse-rate and SPO2.
 
 Code in detail description
-- vitals.h - Pure functions and data structures for vital sign logic
-- vitals.cpp - pure functions 
 - monitor.h - Data for boundaries/messages
 - monitor.cpp - Implementation of composition functions 
-- main.cpp - I/O code: reading values, printing results
 - test-monitor.cpp - Unit tests covering all conditions
