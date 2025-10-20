@@ -14,6 +14,7 @@ struct VitalSigns {
     float spo2;
 };
 
+using WarningFunc = void(*)(float, float, float, float);
 //  Generic checker
 VitalStatus checkVital(float value, float lower, float upper, float toleranceRatio,
                        VitalStatus outOfRangeStatus, WarningFunc printWarning);
@@ -34,4 +35,5 @@ void blinkIndicator();
 void printAlert(VitalStatus status);
 
 int vitalsOk(float temperature, float pulseRate, float spo2);
+
 
