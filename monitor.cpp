@@ -1,22 +1,10 @@
 #include "./monitor.h"
-#include <unordered_map>
+#include <assert.h>
 #include <thread>
 #include <chrono>
 #include <iostream>
-
-using std::cout;
-using std::flush;
-using std::unordered_map;
-
-VitalStatus checkVital(float value, float lower, float upper, float toleranceRatio,
-                       VitalStatus outOfRangeStatus, WarningFunc printWarning) {
-    float tolerance = upper * toleranceRatio;
-    if (value < lower || value > upper) {
-        return outOfRangeStatus;
-    }
-    printWarning(value, lower, upper, tolerance);
-    return VitalStatus::OK;
-}
+#include <unordered_map>
+using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
 
 void printTemperatureWarning(float temp, float lower, float upper, float tolerance) {
     if (temp <= lower + tolerance) {
@@ -24,6 +12,17 @@ void printTemperatureWarning(float temp, float lower, float upper, float toleran
     } else if (temp >= upper - tolerance) {
         cout << "Warning: Approaching hyperthermia\n";
     }
+}
+VitalStatus checkTemperature(float temp) {
+    const float lower = 95.0f;
+    const float upper = 102.0f;
+    const float tolerance = upper * 0.015f;
+
+    if (temp < lower || temp > upper) {
+        return VitalStatus::TemperatureOutOfRange;
+    }
+    printTemperatureWarning(temp, lower, upper, tolerance);
+    return VitalStatus::OK;
 }
 
 void printPulseWarning(float pulse, float lower, float upper, float tolerance) {
@@ -33,50 +32,49 @@ void printPulseWarning(float pulse, float lower, float upper, float tolerance) {
         cout << "Warning: Approaching tachycardia\n";
     }
 }
-
-void printSpo2Warning(float spo2, float lower, float upper, float tolerance) {
-    if (spo2 <= lower + tolerance) {
-        cout << "Warning: Approaching hypoxia\n";
-    }
-}
-
-VitalStatus checkTemperature(float temp) {
-    return checkVital(
-    temp, 95.0f, 102.0f, 0.015f, VitalStatus::TemperatureOutOfRange, printTemperatureWarning);
-}
-
 VitalStatus checkPulse(float pulse) {
-    return checkVital(
-    pulse, 60.0f, 100.0f, 0.015f, VitalStatus::PulseOutOfRange, printPulseWarning);
+    const float lower = 60.0f;
+    const float upper = 100.0f;
+    const float tolerance = upper * 0.015f;   // 1.5
+
+    if (pulse < lower || pulse > upper) {
+        return VitalStatus::PulseOutOfRange;
+    }
+    printPulseWarning(pulse, lower, upper, tolerance);
+    return VitalStatus::OK;
 }
 
 VitalStatus checkSpo2(float spo2) {
-    return checkVital(
-    spo2, 90.0f, 100.0f, 0.015f, VitalStatus::Spo2OutOfRange, printSpo2Warning);
+    const float lower = 90.0;
+    const float tolerance = 100.0 * 0.015;   // 1.5
+
+    if (spo2 < lower) {
+        return VitalStatus::Spo2OutOfRange;
+    }
+    if (spo2 <= lower + tolerance) {
+        cout << "Warning: Approaching hypoxia\n";
+    }
+    return VitalStatus::OK;
 }
 
 VitalStatus evaluateVitals(const VitalSigns& vitals) {
     VitalStatus status = checkTemperature(vitals.temperature);
-    if (status != VitalStatus::OK) return status;
-
-    status = checkPulse(vitals.pulseRate);
-    if (status != VitalStatus::OK) return status;
-
-    return checkSpo2(vitals.spo2);
+    status = (status == VitalStatus::OK) ? checkPulse(vitals.pulseRate) : status;
+    status = (status == VitalStatus::OK) ? checkSpo2(vitals.spo2) : status;
+    return status;
 }
 
-void blinkIndicator(bool enable = true) {
-    if (!enable) return;
+void blinkIndicator() {
     for (int i = 0; i < 6; ++i) {
         cout << "\r* " << flush;
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        sleep_for(seconds(1));
         cout << "\r *" << flush;
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        sleep_for(seconds(1));
     }
 }
 
 void printAlert(VitalStatus status) {
-    static const unordered_map<VitalStatus, const char*> alertMessages = {
+    static const std::unordered_map<VitalStatus, const char*> alertMessages = {
         {VitalStatus::TemperatureOutOfRange, "Temperature is critical!\n"},
         {VitalStatus::PulseOutOfRange, "Pulse Rate is out of range!\n"},
         {VitalStatus::Spo2OutOfRange, "Oxygen Saturation out of range!\n"}
