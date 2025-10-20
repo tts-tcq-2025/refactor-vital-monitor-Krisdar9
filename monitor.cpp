@@ -65,7 +65,7 @@ VitalStatus evaluateVitals(const VitalSigns& vitals) {
     return checkSpo2(vitals.spo2);
 }
 
-void blinkIndicator() {
+void blinkIndicator(bool enable = true) {
     if (!enable) return;
     for (int i = 0; i < 6; ++i) {
         cout << "\r* " << flush;
