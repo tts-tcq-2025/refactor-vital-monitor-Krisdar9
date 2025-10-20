@@ -1,10 +1,14 @@
-#include "monitor.h"
+#include "/monitor.h"
 #include <unordered_map>
 #include <thread>
 #include <chrono>
-using namespace std;
 
 template<typename T, typename WarningFunc>
+
+//  Explicit template instantiation for types used to avoid linker errors
+template VitalStatus checkVital<float, void(*)(float,float,float,float)>(
+    float, float, float, float, VitalStatus, void(*)(float,float,float,float));
+
 VitalStatus checkVital(
     T value, 
     T lower, 
@@ -20,10 +24,6 @@ VitalStatus checkVital(
     printWarning(value, lower, upper, tolerance);
     return VitalStatus::OK;
 }
-
-//  Explicit template instantiation for types used to avoid linker errors
-template VitalStatus checkVital<float, void(*)(float,float,float,float)>(
-    float, float, float, float, VitalStatus, void(*)(float,float,float,float));
 
 void printTemperatureWarning(float temp, float lower, float upper, float tolerance) {
     if (temp <= lower + tolerance) {
