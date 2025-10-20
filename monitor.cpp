@@ -1,7 +1,8 @@
-#include "/monitor.h"
+#include "monitor.h"
 #include <unordered_map>
 #include <thread>
 #include <chrono>
+#include <iostream>
 
 using WarningFunc = void(*)(float, float, float, float);
 
@@ -38,15 +39,18 @@ void printSpo2Warning(float spo2, float lower, float upper, float tolerance) {
 }
 
 VitalStatus checkTemperature(float temp) {
-    return checkVital(temp, 95.0f, 102.0f, 0.015f, VitalStatus::TemperatureOutOfRange, printTemperatureWarning);
+    return checkVital(temp, 95.0f, 102.0f, 0.015f, 
+    VitalStatus::TemperatureOutOfRange, printTemperatureWarning);
 }
 
 VitalStatus checkPulse(float pulse) {
-    return checkVital(pulse, 60.0f, 100.0f, 0.015f, VitalStatus::PulseOutOfRange, printPulseWarning);
+    return checkVital(pulse, 60.0f, 100.0f, 0.015f, 
+    VitalStatus::PulseOutOfRange, printPulseWarning);
 }
 
 VitalStatus checkSpo2(float spo2) {
-    return checkVital(spo2, 90.0f, 100.0f, 0.015f, VitalStatus::Spo2OutOfRange, printSpo2Warning);
+    return checkVital(spo2, 90.0f, 100.0f, 0.015f, 
+    VitalStatus::Spo2OutOfRange, printSpo2Warning);
 }
 
 VitalStatus evaluateVitals(const VitalSigns& vitals) {
