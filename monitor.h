@@ -1,5 +1,10 @@
 #pragma once
-#include <iostream>
+
+struct VitalSigns {
+    float temperature;
+    float pulseRate;
+    float spo2;
+};
 
 enum class VitalStatus {
     OK,
@@ -8,32 +13,11 @@ enum class VitalStatus {
     Spo2OutOfRange
 };
 
-struct VitalSigns {
-    float temperature;
-    float pulseRate;
-    float spo2;
-};
-
-using WarningFunc = void(*)(float, float, float, float);
-//  Generic checker
-VitalStatus checkVital(float value, float lower, float upper, float toleranceRatio,
-                       VitalStatus outOfRangeStatus, WarningFunc printWarning);
-
-//  Warning print functions
-void printTemperatureWarning(float temp, float lower, float upper, float tolerance);
-void printPulseWarning(float pulse, float lower, float upper, float tolerance);
-void printSpo2Warning(float spo2, float lower, float upper, float tolerance);
-
-//  Individual checks
 VitalStatus checkTemperature(float temp);
 VitalStatus checkPulse(float pulse);
 VitalStatus checkSpo2(float spo2);
-
 VitalStatus evaluateVitals(const VitalSigns& vitals);
-void blinkIndicator(bool enable = true);
+
 void printAlert(VitalStatus status);
-
+void blinkIndicator();
 int vitalsOk(float temperature, float pulseRate, float spo2);
-
-
-
