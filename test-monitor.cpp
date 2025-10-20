@@ -3,22 +3,6 @@
 #include <iostream>
 using namespace std;
 
-//  Forward declarations of helper test functions (if needed)
-void testCheckVital();
-void testWarnings();
-void testEvaluateVitals();
-void testVitalsOk();
-
-int main() {
-    testCheckVital();
-    testWarnings();
-    testEvaluateVitals();
-    testVitalsOk();
-
-    cout << "All tests passed!\n";
-    return 0;
-}
-
 void testCheckVital() {
     assert(checkVital(50.0f, 40.0f, 60.0f, 0.1f, VitalStatus::PulseOutOfRange,
                      [](auto, auto, auto, auto) {}) == VitalStatus::OK);
@@ -60,8 +44,19 @@ void testEvaluateVitals() {
 
 void testVitalsOk() {
     assert(vitalsOk(98.6f, 75.0f, 97.0f) == 1);
-
     assert(vitalsOk(110.0f, 75.0f, 97.0f) == 0);
     assert(vitalsOk(98.6f, 50.0f, 97.0f) == 0);
     assert(vitalsOk(98.6f, 75.0f, 80.0f) == 0);
 }
+
+
+int main() {
+    testCheckVital();
+    testWarnings();
+    testEvaluateVitals();
+    testVitalsOk();
+
+    cout << "All tests passed!\n";
+    return 0;
+}
+
