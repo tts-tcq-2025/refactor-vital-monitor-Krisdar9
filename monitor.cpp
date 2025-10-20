@@ -7,11 +7,17 @@
 using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
 
 //  Generic warning printer for approaching lower and upper boundaries
-void printWarning(float value, float lower, float upper, float tolerance, 
+void printWarning(float value, float lower, float upper, float tolerance,
                   const char* lowerWarning, const char* upperWarning = nullptr) {
     if (value <= lower + tolerance) {
         cout << lowerWarning << "\n";
-    } else if (upperWarning != nullptr && value >= upper - tolerance) {
+        return;
+    }
+
+    bool hasUpperWarning = (upperWarning != nullptr);
+    bool exceedsUpper = (value >= upper - tolerance);
+
+    if (hasUpperWarning && exceedsUpper) {
         cout << upperWarning << "\n";
     }
 }
@@ -25,8 +31,8 @@ VitalStatus checkTemperature(float temp) {
         return VitalStatus::TemperatureOutOfRange;
     }
 
-    printWarning(temp, lower, upper, tolerance, 
-                 "Warning: Approaching hypothermia", 
+    printWarning(temp, lower, upper, tolerance,
+                 "Warning: Approaching hypothermia",
                  "Warning: Approaching hyperthermia");
 
     return VitalStatus::OK;
@@ -41,8 +47,8 @@ VitalStatus checkPulse(float pulse) {
         return VitalStatus::PulseOutOfRange;
     }
 
-    printWarning(pulse, lower, upper, tolerance, 
-                 "Warning: Approaching bradycardia", 
+    printWarning(pulse, lower, upper, tolerance,
+                 "Warning: Approaching bradycardia",
                  "Warning: Approaching tachycardia");
 
     return VitalStatus::OK;
