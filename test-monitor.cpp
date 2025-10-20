@@ -16,12 +16,12 @@ void testCheckVital() {
 void testWarnings() {
     printTemperatureWarning(95.0f, 95.0f, 102.0f, 102.0f * 0.015f);
     printTemperatureWarning(101.9f, 95.0f, 102.0f, 102.0f * 0.015f);
-    printTemperatureWarning(98.0f, 95.0f, 102.0f, 102.0f * 0.015f); 
+    printTemperatureWarning(98.0f, 95.0f, 102.0f, 102.0f * 0.015f);
     printPulseWarning(60.0f, 60.0f, 100.0f, 100.0f * 0.015f);
     printPulseWarning(99.0f, 60.0f, 100.0f, 100.0f * 0.015f);
-    printPulseWarning(80.0f, 60.0f, 100.0f, 100.0f * 0.015f); 
+    printPulseWarning(80.0f, 60.0f, 100.0f, 100.0f * 0.015f);
     printSpo2Warning(90.0f, 90.0f, 100.0f, 100.0f * 0.015f);
-    printSpo2Warning(92.0f, 90.0f, 100.0f, 100.0f * 0.015f); 
+    printSpo2Warning(92.0f, 90.0f, 100.0f, 100.0f * 0.015f);
 }
 
 void testEvaluateVitals() {
@@ -55,6 +55,7 @@ int main() {
     cout << "All tests passed!\n";
     return 0;
 }
+
 
 
 
