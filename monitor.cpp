@@ -1,10 +1,29 @@
-#include "./monitor.h"
-#include <assert.h>
+#include "monitor.h"
+#include <unordered_map>
 #include <thread>
 #include <chrono>
-#include <iostream>
-#include <unordered_map>
-using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
+using namespace std;
+
+template<typename T, typename WarningFunc>
+VitalStatus checkVital(
+    T value, 
+    T lower, 
+    T upper, 
+    float toleranceRatio,
+    VitalStatus outOfRangeStatus,
+    WarningFunc printWarning)
+{
+    float tolerance = upper * toleranceRatio;
+    if (value < lower || value > upper) {
+        return outOfRangeStatus;
+    }
+    printWarning(value, lower, upper, tolerance);
+    return VitalStatus::OK;
+}
+
+//  Explicit template instantiation for types used to avoid linker errors
+template VitalStatus checkVital<float, void(*)(float,float,float,float)>(
+    float, float, float, float, VitalStatus, void(*)(float,float,float,float));
 
 void printTemperatureWarning(float temp, float lower, float upper, float tolerance) {
     if (temp <= lower + tolerance) {
@@ -12,17 +31,6 @@ void printTemperatureWarning(float temp, float lower, float upper, float toleran
     } else if (temp >= upper - tolerance) {
         cout << "Warning: Approaching hyperthermia\n";
     }
-}
-VitalStatus checkTemperature(float temp) {
-    const float lower = 95.0f;
-    const float upper = 102.0f;
-    const float tolerance = upper * 0.015f;
-
-    if (temp < lower || temp > upper) {
-        return VitalStatus::TemperatureOutOfRange;
-    }
-    printTemperatureWarning(temp, lower, upper, tolerance);
-    return VitalStatus::OK;
 }
 
 void printPulseWarning(float pulse, float lower, float upper, float tolerance) {
@@ -32,49 +40,46 @@ void printPulseWarning(float pulse, float lower, float upper, float tolerance) {
         cout << "Warning: Approaching tachycardia\n";
     }
 }
-VitalStatus checkPulse(float pulse) {
-    const float lower = 60.0f;
-    const float upper = 100.0f;
-    const float tolerance = upper * 0.015f;   // 1.5
 
-    if (pulse < lower || pulse > upper) {
-        return VitalStatus::PulseOutOfRange;
-    }
-    printPulseWarning(pulse, lower, upper, tolerance);
-    return VitalStatus::OK;
-}
-
-VitalStatus checkSpo2(float spo2) {
-    const float lower = 90.0;
-    const float tolerance = 100.0 * 0.015;   // 1.5
-
-    if (spo2 < lower) {
-        return VitalStatus::Spo2OutOfRange;
-    }
+void printSpo2Warning(float spo2, float lower, float upper, float tolerance) {
     if (spo2 <= lower + tolerance) {
         cout << "Warning: Approaching hypoxia\n";
     }
-    return VitalStatus::OK;
+}
+
+VitalStatus checkTemperature(float temp) {
+    return checkVital(temp, 95.0f, 102.0f, 0.015f, VitalStatus::TemperatureOutOfRange, printTemperatureWarning);
+}
+
+VitalStatus checkPulse(float pulse) {
+    return checkVital(pulse, 60.0f, 100.0f, 0.015f, VitalStatus::PulseOutOfRange, printPulseWarning);
+}
+
+VitalStatus checkSpo2(float spo2) {
+    return checkVital(spo2, 90.0f, 100.0f, 0.015f, VitalStatus::Spo2OutOfRange, printSpo2Warning);
 }
 
 VitalStatus evaluateVitals(const VitalSigns& vitals) {
     VitalStatus status = checkTemperature(vitals.temperature);
-    status = (status == VitalStatus::OK) ? checkPulse(vitals.pulseRate) : status;
-    status = (status == VitalStatus::OK) ? checkSpo2(vitals.spo2) : status;
-    return status;
+    if (status != VitalStatus::OK) return status;
+
+    status = checkPulse(vitals.pulseRate);
+    if (status != VitalStatus::OK) return status;
+
+    return checkSpo2(vitals.spo2);
 }
 
 void blinkIndicator() {
     for (int i = 0; i < 6; ++i) {
         cout << "\r* " << flush;
-        sleep_for(seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         cout << "\r *" << flush;
-        sleep_for(seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
 
 void printAlert(VitalStatus status) {
-    static const std::unordered_map<VitalStatus, const char*> alertMessages = {
+    static const unordered_map<VitalStatus, const char*> alertMessages = {
         {VitalStatus::TemperatureOutOfRange, "Temperature is critical!\n"},
         {VitalStatus::PulseOutOfRange, "Pulse Rate is out of range!\n"},
         {VitalStatus::Spo2OutOfRange, "Oxygen Saturation out of range!\n"}
