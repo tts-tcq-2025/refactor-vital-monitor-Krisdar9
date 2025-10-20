@@ -12,8 +12,7 @@ void printWarning(float value, float lower, float upper, float tolerance,
     if (value <= lower + tolerance) {
         cout << lowerWarning << "\n";
         return;
-    }
-    else if (value >= upper - tolerance) {
+    } else if (value >= upper - tolerance) {
         cout << upperWarning << "\n";
     }
 }
