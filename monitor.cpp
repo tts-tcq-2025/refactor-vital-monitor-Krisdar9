@@ -6,13 +6,16 @@
 #include <unordered_map>
 using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
 
-void printTemperatureWarning(float temp, float lower, float upper, float tolerance) {
-    if (temp <= lower + tolerance) {
-        cout << "Warning: Approaching hypothermia\n";
-    } else if (temp >= upper - tolerance) {
-        cout << "Warning: Approaching hyperthermia\n";
+//  Generic warning printer for approaching lower and upper boundaries
+void printWarning(float value, float lower, float upper, float tolerance, 
+                  const char* lowerWarning, const char* upperWarning = nullptr) {
+    if (value <= lower + tolerance) {
+        cout << lowerWarning << "\n";
+    } else if (upperWarning != nullptr && value >= upper - tolerance) {
+        cout << upperWarning << "\n";
     }
 }
+
 VitalStatus checkTemperature(float temp) {
     const float lower = 95.0f;
     const float upper = 102.0f;
@@ -21,39 +24,41 @@ VitalStatus checkTemperature(float temp) {
     if (temp < lower || temp > upper) {
         return VitalStatus::TemperatureOutOfRange;
     }
-    printTemperatureWarning(temp, lower, upper, tolerance);
+
+    printWarning(temp, lower, upper, tolerance, 
+                 "Warning: Approaching hypothermia", 
+                 "Warning: Approaching hyperthermia");
+
     return VitalStatus::OK;
 }
 
-void printPulseWarning(float pulse, float lower, float upper, float tolerance) {
-    if (pulse <= lower + tolerance) {
-        cout << "Warning: Approaching bradycardia\n";
-    } else if (pulse >= upper - tolerance) {
-        cout << "Warning: Approaching tachycardia\n";
-    }
-}
 VitalStatus checkPulse(float pulse) {
     const float lower = 60.0f;
     const float upper = 100.0f;
-    const float tolerance = upper * 0.015f;   // 1.5
+    const float tolerance = upper * 0.015f;   //  1.5
 
     if (pulse < lower || pulse > upper) {
         return VitalStatus::PulseOutOfRange;
     }
-    printPulseWarning(pulse, lower, upper, tolerance);
+
+    printWarning(pulse, lower, upper, tolerance, 
+                 "Warning: Approaching bradycardia", 
+                 "Warning: Approaching tachycardia");
+
     return VitalStatus::OK;
 }
 
 VitalStatus checkSpo2(float spo2) {
     const float lower = 90.0;
-    const float tolerance = 100.0 * 0.015;   // 1.5
+    const float tolerance = 100.0 * 0.015;   //  1.5
 
     if (spo2 < lower) {
         return VitalStatus::Spo2OutOfRange;
     }
-    if (spo2 <= lower + tolerance) {
-        cout << "Warning: Approaching hypoxia\n";
-    }
+
+    //  For SPO2 only lower warning applies, so pass nullptr for upper warning
+    printWarning(spo2, lower, 100.0f, tolerance, "Warning: Approaching hypoxia", nullptr);
+
     return VitalStatus::OK;
 }
 
