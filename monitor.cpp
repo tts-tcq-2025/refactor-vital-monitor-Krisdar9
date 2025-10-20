@@ -3,20 +3,10 @@
 #include <thread>
 #include <chrono>
 
-template<typename T, typename WarningFunc>
+using WarningFunc = void(*)(float, float, float, float);
 
-//  Explicit template instantiation for types used to avoid linker errors
-template VitalStatus checkVital<float, void(*)(float,float,float,float)>(
-    float, float, float, float, VitalStatus, void(*)(float,float,float,float));
-
-VitalStatus checkVital(
-    T value, 
-    T lower, 
-    T upper, 
-    float toleranceRatio,
-    VitalStatus outOfRangeStatus,
-    WarningFunc printWarning)
-{
+VitalStatus checkVital(float value, float lower, float upper, float toleranceRatio,
+                       VitalStatus outOfRangeStatus, WarningFunc printWarning) {
     float tolerance = upper * toleranceRatio;
     if (value < lower || value > upper) {
         return outOfRangeStatus;
