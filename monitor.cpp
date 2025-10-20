@@ -8,16 +8,12 @@ using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
 
 //  Generic warning printer for approaching lower and upper boundaries
 void printWarning(float value, float lower, float upper, float tolerance,
-                  const char* lowerWarning, const char* upperWarning = nullptr) {
+                  const char* lowerWarning, const char* upperWarning) {
     if (value <= lower + tolerance) {
         cout << lowerWarning << "\n";
         return;
     }
-
-    bool hasUpperWarning = (upperWarning != nullptr);
-    bool exceedsUpper = (value >= upper - tolerance);
-
-    if (hasUpperWarning && exceedsUpper) {
+    else if (value >= upper - tolerance) {
         cout << upperWarning << "\n";
     }
 }
