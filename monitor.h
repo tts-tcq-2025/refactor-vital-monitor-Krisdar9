@@ -30,10 +30,10 @@ VitalStatus checkPulse(float pulse);
 VitalStatus checkSpo2(float spo2);
 
 VitalStatus evaluateVitals(const VitalSigns& vitals);
-
-void blinkIndicator();
+void blinkIndicator(bool enable = true);
 void printAlert(VitalStatus status);
 
 int vitalsOk(float temperature, float pulseRate, float spo2);
+
 
 
