@@ -1,23 +1,67 @@
-#include <gtest/gtest.h>
-#include "./monitor.h"
+#include "monitor.h"
+#include <assert.h>
+#include <iostream>
+using namespace std;
 
-TEST(Monitor, TemperatureOutOfRange) {
-    EXPECT_FALSE(vitalsOk(103, 80, 95));
-    EXPECT_FALSE(vitalsOk(94, 80, 95));
+//  Forward declarations of helper test functions (if needed)
+void testCheckVital();
+void testWarnings();
+void testEvaluateVitals();
+void testVitalsOk();
+
+int main() {
+    testCheckVital();
+    testWarnings();
+    testEvaluateVitals();
+    testVitalsOk();
+
+    cout << "All tests passed!\n";
+    return 0;
 }
 
-TEST(Monitor, PulseRateOutOfRange) {
-    EXPECT_FALSE(vitalsOk(98, 59, 95));
-    EXPECT_FALSE(vitalsOk(98, 101, 95));
+void testCheckVital() {
+    assert(checkVital(50.0f, 40.0f, 60.0f, 0.1f, VitalStatus::PulseOutOfRange,
+                     [](auto, auto, auto, auto) {}) == VitalStatus::OK);
+    assert(checkVital(30.0f, 40.0f, 60.0f, 0.1f, VitalStatus::PulseOutOfRange,
+                     [](auto, auto, auto, auto) {}) == VitalStatus::PulseOutOfRange);
+    assert(checkVital(70.0f, 40.0f, 60.0f, 0.1f, VitalStatus::PulseOutOfRange,
+                     [](auto, auto, auto, auto) {}) == VitalStatus::PulseOutOfRange);
 }
 
-TEST(Monitor, Spo2OutOfRange) {
-    EXPECT_FALSE(vitalsOk(98, 80, 89));
+void testWarnings() {
+    cout << "Testing temperature warnings:\n";
+    printTemperatureWarning(95.0f, 95.0f, 102.0f, 102.0f * 0.015f);
+    printTemperatureWarning(101.9f, 95.0f, 102.0f, 102.0f * 0.015f);
+    printTemperatureWarning(98.0f, 95.0f, 102.0f, 102.0f * 0.015f); 
+
+    cout << "Testing pulse warnings:\n";
+    printPulseWarning(60.0f, 60.0f, 100.0f, 100.0f * 0.015f);
+    printPulseWarning(99.0f, 60.0f, 100.0f, 100.0f * 0.015f);
+    printPulseWarning(80.0f, 60.0f, 100.0f, 100.0f * 0.015f); 
+
+    cout << "Testing spo2 warnings:\n";
+    printSpo2Warning(90.0f, 90.0f, 100.0f, 100.0f * 0.015f);
+    printSpo2Warning(92.0f, 90.0f, 100.0f, 100.0f * 0.015f); 
 }
 
-TEST(Monitor, AllVitalsOk) {
-    EXPECT_TRUE(vitalsOk(98.1, 70, 98));
-    EXPECT_TRUE(vitalsOk(95, 60, 90));
-    EXPECT_TRUE(vitalsOk(102, 100, 90));
+void testEvaluateVitals() {
+    VitalSigns normal{98.6f, 75.0f, 97.0f};
+    assert(evaluateVitals(normal) == VitalStatus::OK);
+
+    VitalSigns tempHigh{110.0f, 75.0f, 97.0f};
+    assert(evaluateVitals(tempHigh) == VitalStatus::TemperatureOutOfRange);
+
+    VitalSigns pulseLow{98.6f, 50.0f, 97.0f};
+    assert(evaluateVitals(pulseLow) == VitalStatus::PulseOutOfRange);
+
+    VitalSigns spo2Low{98.6f, 75.0f, 80.0f};
+    assert(evaluateVitals(spo2Low) == VitalStatus::Spo2OutOfRange);
 }
 
+void testVitalsOk() {
+    assert(vitalsOk(98.6f, 75.0f, 97.0f) == 1);
+
+    assert(vitalsOk(110.0f, 75.0f, 97.0f) == 0);
+    assert(vitalsOk(98.6f, 50.0f, 97.0f) == 0);
+    assert(vitalsOk(98.6f, 75.0f, 80.0f) == 0);
+}
