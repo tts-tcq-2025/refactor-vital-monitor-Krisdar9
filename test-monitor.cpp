@@ -1,6 +1,9 @@
-#include "monitor.h"
+#include <gtest/gtest.h>
+#include "./monitor.h"
 #include <assert.h>
 #include <iostream>
+
+using std::cout;
 
 void testCheckVital() {
     assert(checkVital(50.0f, 40.0f, 60.0f, 0.1f, VitalStatus::PulseOutOfRange,
@@ -54,4 +57,5 @@ int main() {
     cout << "All tests passed!\n";
     return 0;
 }
+
 
