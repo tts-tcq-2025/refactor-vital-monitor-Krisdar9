@@ -66,6 +66,7 @@ VitalStatus evaluateVitals(const VitalSigns& vitals) {
 }
 
 void blinkIndicator() {
+    if (!enable) return;
     for (int i = 0; i < 6; ++i) {
         cout << "\r* " << flush;
         std::this_thread::sleep_for(std::chrono::seconds(1));
