@@ -4,7 +4,9 @@
 #include <chrono>
 #include <iostream>
 
-using WarningFunc = void(*)(float, float, float, float);
+using std::cout;
+using std::flush;
+using std::unordered_map;
 
 VitalStatus checkVital(float value, float lower, float upper, float toleranceRatio,
                        VitalStatus outOfRangeStatus, WarningFunc printWarning) {
